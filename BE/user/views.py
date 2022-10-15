@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.views import APIView
 from user import call_sp
+from user.util import password_validcheck
 from util.resp import response
 
 
@@ -27,6 +28,11 @@ class SignUp(APIView):
                 raise Exception
         except Exception:
             return response(status=status.HTTP_400_BAD_REQUEST)
+
+        # Check passwd validation
+        is_val, message = password_validcheck(passwd)
+        if not is_val:
+            return response(status=status.HTTP_400_BAD_REQUEST, message=message)
 
         user_uuid = str(uuid.uuid4())
         hash_passwd = PasswordHasher().hash(passwd)
