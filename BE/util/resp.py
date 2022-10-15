@@ -4,6 +4,7 @@ from rest_framework.response import Response
 MESSAGE = {
     200 :  'success',
     400 : 'Bad Request',
+    401 : 'Unauthorized',
     403 : 'Not Authorization',
     409 : 'Confilct',
     500 : 'Internal Server Error',
