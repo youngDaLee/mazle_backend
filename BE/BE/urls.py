@@ -23,5 +23,5 @@ urlpatterns = [
     path('home/', include('home.urls')),
     path('recipe/', include('recipe.urls')),
     path('drink/', include('drink.urls')),
-    # path('mypg/', include('mypg.urls')),
+    path('mypg/', include('mypg.urls')),
 ]
