@@ -2,6 +2,16 @@ from util.db_conn import db_conn
 
 
 @db_conn
+def call_one_query(sql_query, sp_args={}, cursor=None):
+    """
+    쿼리 실행 함수
+    """
+    cursor.execute(sql_query, sp_args)
+    data = cursor.fetchone()
+    return data
+
+
+@db_conn
 def call_query(sql_query, cursor=None):
     """
     쿼리 실행 함수
@@ -138,3 +148,80 @@ def call_sp_drink_comment_set(sp_args, cursor=None):
         return True
     else:
         return False
+
+
+@db_conn
+def call_sp_drink_like_select(sp_args, cursor=None):
+    """CALL drink Like Insert SP Fucntion
+    Args:
+        sp_args (dict): sp argumentes following keys::
+            dict: {
+                'customer_uuid': `(str)`,
+                'drink_id': `(int)` drink_id,
+            }
+    Returns:
+        res (bool): `True` if out_code==0 else `False`
+    """
+    sp = "CALL sp_drink_like_select(%(customer_uuid)s, %(drink_id)s, @o);"
+    cursor.execute(sp, sp_args)
+    data = cursor.fetchone()
+
+    cursor.execute('SELECT @o')
+    out_code = cursor.fetchone()
+    out_code = out_code['@o']
+
+    if out_code == -99:
+        return None
+    else:
+        return data
+
+
+@db_conn
+def call_sp_drink_like_set(sp_args, cursor=None):
+    """CALL drink Like Insert SP Fucntion
+    Args:
+        sp_args (dict): sp argumentes following keys::
+            dict: {
+                'customer_uuid': `(str)`,
+                'drink_id': `(int)` drink_id,
+            }
+    Returns:
+        res (bool): `True` if out_code==0 else `False`
+    """
+    sp = "CALL sp_drink_like_set(%(customer_uuid)s, %(drink_id)s, @o);"
+    cursor.execute(sp, sp_args)
+
+    cursor.execute('SELECT @o')
+    out_code = cursor.fetchone()
+    out_code = out_code['@o']
+
+    if out_code == -99:
+        return False
+    else:
+        return True
+
+
+@db_conn
+def call_sp_drink_like_delete(sp_args, cursor=None):
+    """CALL drink Like delete SP Fucntion
+    Args:
+        sp_args (dict): sp argumentes following keys::
+            dict: {
+                'customer_uuid': `(str)`,
+                'drink_id': `(int)` drink_id,
+            }
+    Returns:
+        res (bool): `True` if out_code==0 else `False`
+    """
+    sp = "CALL sp_drink_like_delete(%(customer_uuid)s, %(drink_id)s, @o);"
+    cursor.execute(sp, sp_args)
+
+    cursor.execute('SELECT @o')
+    out_code = cursor.fetchone()
+    out_code = out_code['@o']
+
+    if out_code == -99:
+        return False
+    else:
+        return True
+
