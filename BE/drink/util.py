@@ -2,7 +2,15 @@ import base64
 
 
 def preprocessing_list_data(data):
-    for d in data:
-        d['img'] = base64.decodebytes(d['img']).decode('latin_1')
+    for row in data:
+        row['img'] = base64.decodebytes(row['img']).decode('latin_1')
+
+        try:
+            if row['tag']:
+                row['tag'] = row['tag'].split(',')
+            else:
+                row['tag'] = []
+        except:
+            pass
 
     return data

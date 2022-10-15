@@ -59,6 +59,16 @@ class DrinkDetailView(APIView):
         is_suc, data = call_sp.call_sp_drink_select(sp_args)
         if is_suc:
             data['img'] = base64.decodebytes(data['img']).decode('latin_1')
+            if data['tag']:
+                data['tag'] = data['tag'].split(',')
+            else:
+                data['tag'] = []
+
+            if data['allergy']:
+                data['allergy'] = data['allergy'].split(',')
+            else:
+                data['allergy'] = []
+
             # 조회수 증가
             sql_query = f'''UPDATE mazle.drink
                             SET views=views+1

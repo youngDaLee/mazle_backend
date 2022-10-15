@@ -38,6 +38,11 @@ class RecipeView(APIView):
             for row in data:
                 if row['img']:
                     row['img'] = base64.decodebytes(row['img']).decode('latin_1')
+
+                if row['tag']:
+                    row['tag'] = row['tag'].split(',')
+                else:
+                    row['tag'] = []
             return response(status=status.HTTP_200_OK, data=data)
         else:
             return response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
