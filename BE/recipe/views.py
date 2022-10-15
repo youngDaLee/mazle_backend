@@ -304,29 +304,20 @@ class RecipeLikeView(APIView):
             'customer_uuid': customer_uuid,
             'recipe_id': recipe_id,
         }
-        is_suc, _ = call_sp.call_sp_recipe_like_set(sp_args)
+
+        # Check like
+        sql = '''SELECT COUNT(0) as cnt FROM recipe_like WHERE customer_uuid=%(customer_uuid)s;'''
+        _, data = call_sp.call_one_query(sql, sp_args)
+        print(data['cnt'])
+        if data['cnt'] == 0:  # 좋아요 등록
+            is_suc, _ = call_sp.call_sp_recipe_like_set(sp_args)
+            message = 'Like Registration success'
+        else:  # 좋아요 취소
+            is_suc, _ = call_sp.call_sp_recipe_like_delete(sp_args)
+            message = 'Like Delete success'
+
         if is_suc:
-            return response(status=status.HTTP_200_OK)
-        else:
-            return response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    @csrf_exempt
-    def delete(self, request, recipe_id):
-        try:
-            token = request.headers.get('token')
-            user = jwt.decode(token, JWT_SECRET_KEY, algorithms='HS256')
-
-            customer_uuid = user['id']
-        except Exception:
-            return response(status=status.HTTP_401_UNAUTHORIZED)
-
-        sp_args = {
-            'customer_uuid': customer_uuid,
-            'recipe_id': recipe_id,
-        }
-        is_suc, _ = call_sp.call_sp_recipe_like_delete(sp_args)
-        if is_suc:
-            return response(status=status.HTTP_200_OK)
+            return response(status=status.HTTP_200_OK, message=message)
         else:
             return response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
